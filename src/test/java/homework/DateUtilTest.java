@@ -63,7 +63,7 @@ public class DateUtilTest {
 
     @After
     public void tearDown() throws Exception {
-        System.out.println("//*********** result info ****************//");
+        System.out.println(" *********** result info ****************");
         for (TestResult result : testResults) {
             System.out.println(result.toString());
 //            Assert.assertEquals(result.getDateExpected(),result.getDateResult());
@@ -71,7 +71,6 @@ public class DateUtilTest {
 
 
     }
-
     @Test
     public void nextNdays() throws Exception {
 
@@ -81,7 +80,7 @@ public class DateUtilTest {
             MyDate thatDay = row.getOutputDate();
             TestResult result = new TestResult();
             result.setDateInput(thisDay);
-            result.setDateResult(util.nextNdays(thisDay, n));
+            result.setDateResult(util.nextDays(thisDay, n));
             result.setDateExpected(thatDay);
             result.setN(n);
             testResults.add(result);
@@ -105,42 +104,42 @@ public class DateUtilTest {
         System.out.println("the next day is:" + util.nextDay(year, month, day));
     }*/
 
-    @Test
+    /*@Test
     public void nextNdaysByCalendar() throws Exception {
-        Date date = new Date();
 
-        /*TestSuite suite = new TestSuite();
+        int year = 118;
+
+        // int year = -316;
+        int month = 3;
+        int day = 10;
+        Date date = new Date(year, month - 1, day);
+//        date = new Date();
+
+        *//*TestSuite suite = new TestSuite();
         junit.framework.TestResult testResult = new junit.framework.TestResult();
         suite.run(testResult);
-        suite*/
+        suite*//*
 //        int n = -365*2000;
-        /*1582年10月05日到10月14日这十天不存在*/
+        *//*1582年10月05日到10月14日这十天不存在*//*
 
-        //int n = -300000;
-//        int n = -158925;
+//        int n = -710;
+//        int n = -158890 - 265;
+        int n = -733;
+
+//        int n = -158925*2;
+        // long n = (2 << 30) - 1;
 //        int n = 181502;
-        int n = 365;
+//        int n = 365 * 1000;
 //        int n = 365*3 +366;
         System.out.println("result of system api ==========>");
-        System.out.println(util.nextNdaysByCalendar(new MyDate(date), n));
+        System.out.println(util.nextNdaysByCalendar(new MyDate(date), (int) n));
         System.out.println("result of my program =========>");
         System.out.println(util.nextNdays(new MyDate(date), n));
         System.out.println();
 
-    }
+    }*/
 
-    @Test
-    public void year400() {
-        int n = 400;
-        int sum = 0;
-        for (int year = 1; year <= 400; year++) {
-            if ((year % 100 != 0 && year % 4 == 0) || year % 400 == 0) {
-                sum += 366;
-            }
-            sum += 365;
-        }
-        System.out.println(sum);
-    }
+
 
     class TestResult {
         private MyDate dateInput;

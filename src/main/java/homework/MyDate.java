@@ -34,6 +34,29 @@ public class MyDate {
         this.day = day;
     }
 
+    public int compareTo(MyDate anotherDate) {
+        if (year > anotherDate.getYear()) {
+            return 1;
+        }
+        else if (year == anotherDate.getYear()) {
+            if (month > anotherDate.getMonth()) {
+                return 1;
+            }
+            else if (month == anotherDate.getMonth()) {
+                if (day > anotherDate.getDay()) {
+                    return 1;
+                }
+                else if (day == anotherDate.getDay()) {
+                    return 0;
+                }
+                return -1;
+            }
+
+            return -1;
+        }
+        return -1;
+    }
+
     public int getYear() {
         return year;
     }
