@@ -31,9 +31,6 @@ public class DateUtil {
 
             //logger.info("now n is " + n);
             int thisYear = myDate.getYear();
-            int thisMonth = myDate.getMonth();
-            int thisDay = myDate.getDay();
-
             if (n >= 0) {
 
                 //判断这一年是不是闰年
@@ -48,8 +45,7 @@ public class DateUtil {
                         n -= 365;
                         myDate.setYear(thisYear + 1);
                     }
-                }
-                else if ((thisYear == 1582 || thisYear == 1581)&& isGoThrough1582 == false ) {
+                } else if ((thisYear == 1582 || thisYear == 1581) && isGoThrough1582 == false) {
                     //1582年少了10天,所以直接计算比较麻烦,改用原始方法,当时间早于1582.10.15
                     while (n > 0 && myDate.compareTo(new MyDate(1582, 10, 15)) == -1) {
                         n--;
@@ -58,8 +54,7 @@ public class DateUtil {
                     isGoThrough1582 = true;
 
 //                return nextNdays(myDate, n - 355);
-                }
-                else {
+                } else {
                     //n > 366
                     //这一年不是闰年但是下一年是,并且日期超过2月28日
                     if (isLeapYear(thisYear + 1) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == 1) {
@@ -72,8 +67,7 @@ public class DateUtil {
 
                 }
 
-            }
-            else {
+            } else {
 
                 //判断这一年是不是闰年
                 if (isLeapYear(thisYear)) {
@@ -89,8 +83,7 @@ public class DateUtil {
 
                     }
 
-                }
-                else if ((thisYear == 1582 || thisYear == 1583) && isGoThrough1582 == false) {
+                } else if ((thisYear == 1582 || thisYear == 1583) && isGoThrough1582 == false) {
                     //1582年少了10天,所以直接计算比较麻烦,改用原始方法
                     //当时间晚于1582年10月4日
                     while (n < 0 && myDate.compareTo(new MyDate(1582, 10, 4)) == 1) {
@@ -102,8 +95,7 @@ public class DateUtil {
                     isGoThrough1582 = true;
 
 //                return nextNdays(myDate, n + 355);
-                }
-                else {
+                } else {
                     //这一年不是闰年但是上一年是,并且日期没到2月28日
                     if (isLeapYear(thisYear - 1) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == -1) {
                         n += 366;
@@ -165,6 +157,9 @@ public class DateUtil {
             } else {
                 month = 1;
                 year += 1;
+                if (year == 0) {
+                    year = 1;
+                }
             }
         }
         return new MyDate(year, month, day);
@@ -193,13 +188,13 @@ public class DateUtil {
                 --month;
             } else {
                 //计算年份
-                if (year - 1 == 0) {
+                --year;
+                month = 12;
+                if (year == 0) {
                     //System.out.println("去不了公元前");
                     //0年就是公元前1年
                     year = -1;
                 }
-                --year;
-                month = 12;
             }
             day = getDayOfMonth(year, month);
         }
@@ -285,7 +280,11 @@ public class DateUtil {
 
     public MyDate strToMyDate(String str) {
 
-        String pattern = ".*[0-9]{4}(.[0-9]{1,2}){2}.*";
+        if (str.equals("") || str == null) {
+            logger.info("the string is null");
+            return null;
+        }
+        String pattern = ".*[0-9]+(.[0-9]{1,2}){2}.*";
         if (!Pattern.matches(pattern, str)) {
             logger.info("the string not matches yyyy/mm/dd");
             return null;
@@ -295,24 +294,15 @@ public class DateUtil {
             str = str.substring(0, str.lastIndexOf(" "));
         }
         //以/ | . - _ \为分隔符
-        String[] strs = str.split("/|\\||\\.|-|_|\\\\");
+        String[] strs = str.split("/|\\||\\.|_|\\\\");
         int year = Integer.parseInt(strs[0]);
         int month = Integer.parseInt(strs[1]);
         int day = Integer.parseInt(strs[2]);
         return new MyDate(year, month, day);
     }
 
-    /*public Date strToDate(String str) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        try {
-            return sdf.parse(str);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }*/
-
-    public Date nextNdaysByCalendar(MyDate date, int n) {
+    /**使用系统函数验证next n day **/
+    /*public Date nextNdaysByCalendar(MyDate date, int n) {
         if (!isDateLegal(date)) {
             logger.info("the date is not legal");
             return null;
@@ -334,7 +324,7 @@ public class DateUtil {
         logger.info("next n day is: " + sdf.format(nextNdays) + " by java.calendar");
 
         return nextNdays;
-    }
+    }*/
 
 }
 

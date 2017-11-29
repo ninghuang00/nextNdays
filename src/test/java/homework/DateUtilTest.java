@@ -34,6 +34,7 @@ public class DateUtilTest {
                 System.out.println(i+"行 "+j+"列  "+ result.get(i).get(j).toString());
             }
         }*/
+
         for (int i = 0; i < height; ++i) {
             String in = result.get(i).get(0).toString();
             String n = result.get(i).get(1).toString();
@@ -41,24 +42,25 @@ public class DateUtilTest {
 
 //            System.out.println(in + "," + n + "," + out);
 
-            MyDate iner = util.strToMyDate(in);
-//            System.out.println("input date is " + iner);
-            /*if (util.isDateLegal(util.strToMyDate(in))) {
-                // 判断输入的字符串代表的日期是不是合法的,不然的话无法转换
-                iner = util.strToMyDate(in);
-            } else {
-                logger.info("the input date is not legal");
-            }*/
-            MyDate outer = null;
-            if (!out.equals("null")) {
-                outer = util.strToMyDate(out);
-            } else {
-                logger.info("the output date expected is null");
+            try {
+                MyDate iner = util.strToMyDate(in);
+
+                MyDate outer = null;
+                if (!out.equals("null")) {
+                    outer = util.strToMyDate(out);
+                } else {
+                    logger.info("the output date expected is null");
+                }
+                Row row = new Row(iner, (int) Double.parseDouble(n), outer);
+                rows.add(row);
+
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                logger.info("where wrong:============> " + " in is " + in + " n is " + n + " out is " + out);
             }
 
-            Row row = new Row(iner, (int) Double.parseDouble(n), outer);
-            rows.add(row);
         }
+
     }
 
     @After
