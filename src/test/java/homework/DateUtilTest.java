@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +26,7 @@ public class DateUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        File file = new File("testCases.xlsx");
+        File file = new File("testcase/test严晓波.xlsx");
         ArrayList<ArrayList<Object>> result = ExcelUtil.readExcel(file);
         int height = result.size();
 
@@ -36,22 +37,34 @@ public class DateUtilTest {
         }*/
 
         for (int i = 0; i < height; ++i) {
-            String in = result.get(i).get(0).toString();
-            String n = result.get(i).get(1).toString();
-            String out = result.get(i).get(2).toString();
+            String in = result.get(i).get(0).toString().trim();
+            String n = result.get(i).get(1).toString().trim();
+            String out = result.get(i).get(2).toString().trim();
 
 //            System.out.println(in + "," + n + "," + out);
 
             try {
+
+                int ner = 0;
                 MyDate iner = util.strToMyDate(in);
 
-                MyDate outer = null;
-                if (!out.equals("null")) {
-                    outer = util.strToMyDate(out);
+                MyDate outer = util.strToMyDate(out);
+//                if (!out.equals("null")) {
+//                    outer = util.strToMyDate(out);
+//                } else {
+//                    logger.info("the output date expected is null");
+//                }
+
+//                System.out.println("n is ==================>\n" + n);
+                String pattern = "^(-?\\d+)(\\.\\d+)?$";
+                if (Pattern.compile(pattern).matcher(n).find()) {
+                    ner = (int) Double.parseDouble(n);
                 } else {
-                    logger.info("the output date expected is null");
+                    iner = null;
+                    outer = null;
                 }
-                Row row = new Row(iner, (int) Double.parseDouble(n), outer);
+
+                Row row = new Row(iner, ner, outer);
                 rows.add(row);
 
             } catch (NumberFormatException e) {
@@ -61,7 +74,7 @@ public class DateUtilTest {
 
         }
 
-        System.out.println();
+//        System.out.println();
 
     }
 

@@ -3,6 +3,7 @@ package homework;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Created by huangning on 2017/11/28.
@@ -28,16 +29,22 @@ public class Demo {
     @Test
     public void nextDays() throws Exception {
 
+//        String n = "1";
+//        String pattern = "^-?\\d+$";
+//        if (Pattern.compile(pattern).matcher(n).find()) {
+//            System.out.println("pass");
+//        }
+
 //        String path = Demo.class.getClassLoader().getResource("");
-        /*int year = 1582;
-        int month = 3;
-        int day = 10;
-        int n = -3650000;
+        int year = 2016;
+        int month = 2;
+        int day = 30;
+        int n = 3;
         MyDate thisDay = new MyDate(year, month, day);
 
         MyDate thatDay = util.nextNdays(thisDay, n);
 
-        System.out.println();*/
+        System.out.println();
     }
 
     @Test

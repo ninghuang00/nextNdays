@@ -147,8 +147,8 @@ public class DateUtil {
     //得到下一天
     public MyDate nextDay(MyDate date) {
         //判断输入日期是否合法
-        if (!isDateLegal(date)) {
-            System.out.println("the date you input is illegal: " + date.toString());
+         if (!isDateLegal(date)) {
+            System.out.println("the date you input is illegal: " + date);
             return null;
         }
         int year = date.getYear();
@@ -221,7 +221,7 @@ public class DateUtil {
         boolean result = true;
         if (thisDay == null) {
             logger.info("the date input is null" + thisDay);
-            result = false;
+            return false;
 
         }
         int year = thisDay.getYear();
