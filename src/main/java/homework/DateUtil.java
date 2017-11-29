@@ -31,8 +31,19 @@ public class DateUtil {
 
             //logger.info("now n is " + n);
             int thisYear = myDate.getYear();
-            if (n >= 0) {
+            int lastYear = thisYear - 1;
+            int nextYear = thisYear + 1;
+            if (lastYear == 0) {
+                lastYear = -1;
+            }
+            if (nextYear == 0) {
+                nextYear = 1;
+            }
 
+            if (n >= 0) {
+                /*if (myDate.getYear() == 0) {
+                    myDate.setYear(1);
+                }*/
                 //判断这一年是不是闰年
                 if (isLeapYear(thisYear)) {
                     //n > 366
@@ -43,7 +54,7 @@ public class DateUtil {
                     }
                     if (n >= 365) {
                         n -= 365;
-                        myDate.setYear(thisYear + 1);
+                        myDate.setYear(nextYear);
                     }
                 } else if ((thisYear == 1582 || thisYear == 1581) && isGoThrough1582 == false) {
                     //1582年少了10天,所以直接计算比较麻烦,改用原始方法,当时间早于1582.10.15
@@ -57,17 +68,20 @@ public class DateUtil {
                 } else {
                     //n > 366
                     //这一年不是闰年但是下一年是,并且日期超过2月28日
-                    if (isLeapYear(thisYear + 1) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == 1) {
+                    if (isLeapYear(nextYear) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == 1) {
                         n -= 366;
                     } else {
                         //如果没有超过2月28日,要到明年的同一天只要365天
                         n -= 365;
                     }
-                    myDate.setYear(thisYear + 1);
+                    myDate.setYear(nextYear);
 
                 }
 
             } else {
+//                if (myDate.getYear() == 0) {
+//                    myDate.setYear(-1);
+//                }
 
                 //判断这一年是不是闰年
                 if (isLeapYear(thisYear)) {
@@ -79,7 +93,7 @@ public class DateUtil {
                     }
                     if (n <= -365) {
                         n += 365;
-                        myDate.setYear(thisYear - 1);
+                        myDate.setYear(lastYear);
 
                     }
 
@@ -97,13 +111,13 @@ public class DateUtil {
 //                return nextNdays(myDate, n + 355);
                 } else {
                     //这一年不是闰年但是上一年是,并且日期没到2月28日
-                    if (isLeapYear(thisYear - 1) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == -1) {
+                    if (isLeapYear(lastYear) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == -1) {
                         n += 366;
                     } else {
                         //如果超过2月28日,要到去年的同一天只要365天
                         n += 365;
                     }
-                    myDate.setYear(thisYear - 1);
+                    myDate.setYear(lastYear);
 
                 }
             }
@@ -134,7 +148,7 @@ public class DateUtil {
     public MyDate nextDay(MyDate date) {
         //判断输入日期是否合法
         if (!isDateLegal(date)) {
-            System.out.println("the date you input is illegal");
+            System.out.println("the date you input is illegal: " + date.toString());
             return null;
         }
         int year = date.getYear();
@@ -169,7 +183,7 @@ public class DateUtil {
     public MyDate lastDay(MyDate date) {
         //判断输入日期是否合法
         if (!isDateLegal(date)) {
-            logger.info("the format of date is illegal");
+            System.out.println("the format of date is illegal:" + date.toString());
             return null;
         }
         int year = date.getYear();
@@ -204,37 +218,50 @@ public class DateUtil {
 
     //判断日期是否合法
     public boolean isDateLegal(MyDate thisDay) {
+        boolean result = true;
+        if (thisDay == null) {
+            logger.info("the date input is null" + thisDay);
+            result = false;
+
+        }
         int year = thisDay.getYear();
         int month = thisDay.getMonth();
         int day = thisDay.getDay();
         //判断当前年份是否合法
         if (year == 0) {
-            logger.info("the format of year is illegal");
-            logger.info("year is " + year);
-            return false;
+            logger.info("the format of year is illegal" + thisDay);
+            result = false;
+
         }
         //判断当前月份是否合法
         if (month > 12 || month < 1) {
-            logger.info("month is " + month);
-            return false;
+            logger.info("illegal month :" + thisDay);
+            result = false;
+
         }
         //得到当前月份对应的天数
         int dayOfMonth = getDayOfMonth(year, month);
         //判断当前日期是否合法
         if (day > dayOfMonth || day < 1) {
+            logger.info("illegal day :" + thisDay);
             logger.info("dayOfMonth is " + dayOfMonth);
             logger.info("day is " + day);
-            return false;
+            result = false;
+
         }
         //1582年10月05日到10月14日这十天不存在
         if (year == 1582 && month == 10) {
             if (day >= 5 && day <= 14) {
                 logger.info("the date " + year + "." + month + "." + day + "does not exist in the history");
-                return false;
+                result = false;
             }
         }
 
-        return true;
+        if (!result) {
+            System.out.println("this date is illegal: " + thisDay);
+        }
+
+        return result;
     }
 
     //判断平年和闰年,并返回相应月份的天数
@@ -280,10 +307,7 @@ public class DateUtil {
 
     public MyDate strToMyDate(String str) {
 
-        if (str.equals("") || str == null) {
-            logger.info("the string is null");
-            return null;
-        }
+
         String pattern = ".*[0-9]+(.[0-9]{1,2}){2}.*";
         if (!Pattern.matches(pattern, str)) {
             logger.info("the string not matches yyyy/mm/dd");

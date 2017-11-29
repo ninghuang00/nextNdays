@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DateUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">homework</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DateUtil (homework)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DateUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    99.3%
+  </span>
+  <span class="absValue">
+    (134/ 135)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package homework;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.text.SimpleDateFormat;
+<i>4</i>&nbsp;import java.util.Calendar;
+<i>5</i>&nbsp;import java.util.Date;
+<i>6</i>&nbsp;import java.util.logging.Logger;
+<i>7</i>&nbsp;import java.util.regex.Pattern;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Created by huangning on 2017/11/2.
+<i>11</i>&nbsp; */
+<b class="fc"><i>12</i>&nbsp;public class DateUtil {</b>
+<b class="fc"><i>13</i>&nbsp;    Logger logger = Logger.getLogger(&quot;hn&quot;);</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    //得到n天之后的日期
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /********1582年10月05日到10月14日这十天不存在***********/
+<i>18</i>&nbsp;    //使用的时候调用这个函数就好了
+<i>19</i>&nbsp;    public MyDate nextNdays(MyDate myDate, long n) {
+<b class="fc"><i>20</i>&nbsp;        if (myDate == null) {</b>
+<b class="fc"><i>21</i>&nbsp;            return null;</b>
+<i>22</i>&nbsp;        }
+<i>23</i>&nbsp;
+<b class="fc"><i>24</i>&nbsp;        boolean isGoThrough1582 = false;</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;        //当n大于一年的天数的时候,先用年份计算
+<b class="fc"><i>27</i>&nbsp;        while (Math.abs(n) &gt; 366) {</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;//            logger.info(&quot;now n is &quot; + n);
+<i>30</i>&nbsp;//            logger.info(&quot;date is &quot; + myDate);
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;            //logger.info(&quot;now n is &quot; + n);
+<b class="fc"><i>33</i>&nbsp;            int thisYear = myDate.getYear();</b>
+<i>34</i>&nbsp;
+<b class="fc"><i>35</i>&nbsp;            if (n &gt;= 0) {</b>
+<b class="fc"><i>36</i>&nbsp;                if (myDate.getYear() == 0) {</b>
+<b class="nc"><i>37</i>&nbsp;                    myDate.setYear(1);</b>
+<i>38</i>&nbsp;                }
+<i>39</i>&nbsp;                //判断这一年是不是闰年
+<b class="fc"><i>40</i>&nbsp;                if (isLeapYear(thisYear)) {</b>
+<i>41</i>&nbsp;                    //n &gt; 366
+<i>42</i>&nbsp;                    //当时间早于该闰年的3月1日时
+<b class="fc"><i>43</i>&nbsp;                    while (n &gt; 0 &amp;&amp; myDate.compareTo(new MyDate(thisYear, 3, 1)) == -1) {</b>
+<b class="fc"><i>44</i>&nbsp;                        n--;</b>
+<b class="fc"><i>45</i>&nbsp;                        myDate = nextDay(myDate);</b>
+<i>46</i>&nbsp;                    }
+<b class="fc"><i>47</i>&nbsp;                    if (n &gt;= 365) {</b>
+<b class="fc"><i>48</i>&nbsp;                        n -= 365;</b>
+<b class="fc"><i>49</i>&nbsp;                        myDate.setYear(thisYear + 1);</b>
+<i>50</i>&nbsp;                    }
+<b class="fc"><i>51</i>&nbsp;                } else if ((thisYear == 1582 || thisYear == 1581) &amp;&amp; isGoThrough1582 == false) {</b>
+<i>52</i>&nbsp;                    //1582年少了10天,所以直接计算比较麻烦,改用原始方法,当时间早于1582.10.15
+<b class="fc"><i>53</i>&nbsp;                    while (n &gt; 0 &amp;&amp; myDate.compareTo(new MyDate(1582, 10, 15)) == -1) {</b>
+<b class="fc"><i>54</i>&nbsp;                        n--;</b>
+<b class="fc"><i>55</i>&nbsp;                        myDate = nextDay(myDate);</b>
+<i>56</i>&nbsp;                    }
+<b class="fc"><i>57</i>&nbsp;                    isGoThrough1582 = true;</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;//                return nextNdays(myDate, n - 355);
+<i>60</i>&nbsp;                } else {
+<i>61</i>&nbsp;                    //n &gt; 366
+<i>62</i>&nbsp;                    //这一年不是闰年但是下一年是,并且日期超过2月28日
+<b class="fc"><i>63</i>&nbsp;                    if (isLeapYear(thisYear + 1) &amp;&amp; myDate.compareTo(new MyDate(thisYear, 3, 1)) == 1) {</b>
+<b class="fc"><i>64</i>&nbsp;                        n -= 366;</b>
+<i>65</i>&nbsp;                    } else {
+<i>66</i>&nbsp;                        //如果没有超过2月28日,要到明年的同一天只要365天
+<b class="fc"><i>67</i>&nbsp;                        n -= 365;</b>
+<i>68</i>&nbsp;                    }
+<b class="fc"><i>69</i>&nbsp;                    myDate.setYear(thisYear + 1);</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;                }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;            } else {
+<b class="fc"><i>74</i>&nbsp;                if (myDate.getYear() == 0) {</b>
+<b class="fc"><i>75</i>&nbsp;                    myDate.setYear(-1);</b>
+<i>76</i>&nbsp;                }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;                //判断这一年是不是闰年
+<b class="fc"><i>79</i>&nbsp;                if (isLeapYear(thisYear)) {</b>
+<i>80</i>&nbsp;                    // n &lt; -366
+<i>81</i>&nbsp;                    //当时间晚于该闰年的2月28日时
+<b class="fc"><i>82</i>&nbsp;                    while (n &lt; 0 &amp;&amp; myDate.compareTo(new MyDate(thisYear, 2, 28)) == 1) {</b>
+<b class="fc"><i>83</i>&nbsp;                        n++;</b>
+<b class="fc"><i>84</i>&nbsp;                        myDate = lastDay(myDate);</b>
+<i>85</i>&nbsp;                    }
+<b class="fc"><i>86</i>&nbsp;                    if (n &lt;= -365) {</b>
+<b class="fc"><i>87</i>&nbsp;                        n += 365;</b>
+<b class="fc"><i>88</i>&nbsp;                        myDate.setYear(thisYear - 1);</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;                    }
+<i>91</i>&nbsp;
+<b class="fc"><i>92</i>&nbsp;                } else if ((thisYear == 1582 || thisYear == 1583) &amp;&amp; isGoThrough1582 == false) {</b>
+<i>93</i>&nbsp;                    //1582年少了10天,所以直接计算比较麻烦,改用原始方法
+<i>94</i>&nbsp;                    //当时间晚于1582年10月4日
+<b class="fc"><i>95</i>&nbsp;                    while (n &lt; 0 &amp;&amp; myDate.compareTo(new MyDate(1582, 10, 4)) == 1) {</b>
+<b class="fc"><i>96</i>&nbsp;                        n++;</b>
+<b class="fc"><i>97</i>&nbsp;                        myDate = lastDay(myDate);</b>
+<i>98</i>&nbsp;//                        logger.info(&quot;now n is &quot; + n);
+<i>99</i>&nbsp;//                        logger.info(&quot;date is &quot; + myDate);
+<i>100</i>&nbsp;                    }
+<b class="fc"><i>101</i>&nbsp;                    isGoThrough1582 = true;</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;//                return nextNdays(myDate, n + 355);
+<i>104</i>&nbsp;                } else {
+<i>105</i>&nbsp;                    //这一年不是闰年但是上一年是,并且日期没到2月28日
+<b class="fc"><i>106</i>&nbsp;                    if (isLeapYear(thisYear - 1) &amp;&amp; myDate.compareTo(new MyDate(thisYear, 3, 1)) == -1) {</b>
+<b class="fc"><i>107</i>&nbsp;                        n += 366;</b>
+<i>108</i>&nbsp;                    } else {
+<i>109</i>&nbsp;                        //如果超过2月28日,要到去年的同一天只要365天
+<b class="fc"><i>110</i>&nbsp;                        n += 365;</b>
+<i>111</i>&nbsp;                    }
+<b class="fc"><i>112</i>&nbsp;                    myDate.setYear(thisYear - 1);</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;                }
+<i>115</i>&nbsp;            }
+<b class="fc"><i>116</i>&nbsp;        }</b>
+<i>117</i>&nbsp;
+<b class="fc"><i>118</i>&nbsp;        return nextDays(myDate, n);</b>
+<i>119</i>&nbsp;        //return nextNdays(myDate, n);
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    //以n为条件进行while循环,计算日期
+<i>124</i>&nbsp;    public MyDate nextDays(MyDate myDate, long n) {
+<b class="fc"><i>125</i>&nbsp;        if (myDate != null) {</b>
+<b class="fc"><i>126</i>&nbsp;            if (n &gt;= 0) {</b>
+<b class="fc"><i>127</i>&nbsp;                while (n-- &gt; 0) {</b>
+<b class="fc"><i>128</i>&nbsp;                    myDate = nextDay(myDate);</b>
+<i>129</i>&nbsp;                }
+<i>130</i>&nbsp;            } else {
+<b class="fc"><i>131</i>&nbsp;                while (n++ &lt; 0) {</b>
+<b class="fc"><i>132</i>&nbsp;                    myDate = lastDay(myDate);</b>
+<i>133</i>&nbsp;                }
+<i>134</i>&nbsp;            }
+<i>135</i>&nbsp;        }
+<b class="fc"><i>136</i>&nbsp;        return myDate;</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    //得到下一天
+<i>140</i>&nbsp;    public MyDate nextDay(MyDate date) {
+<i>141</i>&nbsp;        //判断输入日期是否合法
+<b class="fc"><i>142</i>&nbsp;        if (!isDateLegal(date)) {</b>
+<b class="fc"><i>143</i>&nbsp;            System.out.println(&quot;the date you input is illegal&quot;);</b>
+<b class="fc"><i>144</i>&nbsp;            return null;</b>
+<i>145</i>&nbsp;        }
+<b class="fc"><i>146</i>&nbsp;        int year = date.getYear();</b>
+<b class="fc"><i>147</i>&nbsp;        int month = date.getMonth();</b>
+<b class="fc"><i>148</i>&nbsp;        int day = date.getDay();</b>
+<i>149</i>&nbsp;        //特例:1582年10月4日的下一天是10月15日
+<b class="fc"><i>150</i>&nbsp;        if (year == 1582 &amp;&amp; month == 10 &amp;&amp; day == 4) {</b>
+<b class="fc"><i>151</i>&nbsp;            return new MyDate(year, month, 15);</b>
+<i>152</i>&nbsp;        }
+<i>153</i>&nbsp;        //得到当前月份的天数
+<b class="fc"><i>154</i>&nbsp;        int dayOfMonth = getDayOfMonth(year, month);</b>
+<i>155</i>&nbsp;        //判断日期是否进位
+<b class="fc"><i>156</i>&nbsp;        if (day + 1 &lt;= dayOfMonth) {</b>
+<b class="fc"><i>157</i>&nbsp;            day += 1;</b>
+<i>158</i>&nbsp;        } else {
+<b class="fc"><i>159</i>&nbsp;            day = 1;</b>
+<i>160</i>&nbsp;            //判断月份是否进位
+<b class="fc"><i>161</i>&nbsp;            if (month + 1 &lt;= 12) {</b>
+<b class="fc"><i>162</i>&nbsp;                month += 1;</b>
+<i>163</i>&nbsp;            } else {
+<b class="fc"><i>164</i>&nbsp;                month = 1;</b>
+<b class="fc"><i>165</i>&nbsp;                year += 1;</b>
+<b class="fc"><i>166</i>&nbsp;                if (year == 0) {</b>
+<b class="fc"><i>167</i>&nbsp;                    year = 1;</b>
+<i>168</i>&nbsp;                }
+<i>169</i>&nbsp;            }
+<i>170</i>&nbsp;        }
+<b class="fc"><i>171</i>&nbsp;        return new MyDate(year, month, day);</b>
+<i>172</i>&nbsp;    }
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;    //得到前一天
+<i>175</i>&nbsp;    public MyDate lastDay(MyDate date) {
+<i>176</i>&nbsp;        //判断输入日期是否合法
+<b class="fc"><i>177</i>&nbsp;        if (!isDateLegal(date)) {</b>
+<b class="fc"><i>178</i>&nbsp;            logger.info(&quot;the format of date is illegal&quot;);</b>
+<b class="fc"><i>179</i>&nbsp;            return null;</b>
+<i>180</i>&nbsp;        }
+<b class="fc"><i>181</i>&nbsp;        int year = date.getYear();</b>
+<b class="fc"><i>182</i>&nbsp;        int month = date.getMonth();</b>
+<b class="fc"><i>183</i>&nbsp;        int day = date.getDay();</b>
+<i>184</i>&nbsp;        //特例: 1582年10月15日的前一天是10月4日
+<b class="fc"><i>185</i>&nbsp;        if (year == 1582 &amp;&amp; month == 10 &amp;&amp; day == 15) {</b>
+<b class="fc"><i>186</i>&nbsp;            return new MyDate(year, month, 4);</b>
+<i>187</i>&nbsp;        }
+<i>188</i>&nbsp;        //计算日子
+<b class="fc"><i>189</i>&nbsp;        if (day - 1 &gt; 0) {</b>
+<b class="fc"><i>190</i>&nbsp;            --day;</b>
+<i>191</i>&nbsp;        } else {
+<i>192</i>&nbsp;            //计算月份
+<b class="fc"><i>193</i>&nbsp;            if (month - 1 &gt; 0) {</b>
+<b class="fc"><i>194</i>&nbsp;                --month;</b>
+<i>195</i>&nbsp;            } else {
+<i>196</i>&nbsp;                //计算年份
+<b class="fc"><i>197</i>&nbsp;                --year;</b>
+<b class="fc"><i>198</i>&nbsp;                month = 12;</b>
+<b class="fc"><i>199</i>&nbsp;                if (year == 0) {</b>
+<i>200</i>&nbsp;                    //System.out.println(&quot;去不了公元前&quot;);
+<i>201</i>&nbsp;                    //0年就是公元前1年
+<b class="fc"><i>202</i>&nbsp;                    year = -1;</b>
+<i>203</i>&nbsp;                }
+<i>204</i>&nbsp;            }
+<b class="fc"><i>205</i>&nbsp;            day = getDayOfMonth(year, month);</b>
+<i>206</i>&nbsp;        }
+<i>207</i>&nbsp;
+<b class="fc"><i>208</i>&nbsp;        return new MyDate(year, month, day);</b>
+<i>209</i>&nbsp;    }
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;    //判断日期是否合法
+<i>212</i>&nbsp;    public boolean isDateLegal(MyDate thisDay) {
+<b class="fc"><i>213</i>&nbsp;        if (thisDay == null) {</b>
+<b class="fc"><i>214</i>&nbsp;            logger.info(&quot;the date input is null&quot;);</b>
+<b class="fc"><i>215</i>&nbsp;            return false;</b>
+<i>216</i>&nbsp;        }
+<b class="fc"><i>217</i>&nbsp;        int year = thisDay.getYear();</b>
+<b class="fc"><i>218</i>&nbsp;        int month = thisDay.getMonth();</b>
+<b class="fc"><i>219</i>&nbsp;        int day = thisDay.getDay();</b>
+<i>220</i>&nbsp;        //判断当前年份是否合法
+<b class="fc"><i>221</i>&nbsp;        if (year == 0) {</b>
+<b class="fc"><i>222</i>&nbsp;            logger.info(&quot;the format of year is illegal&quot;);</b>
+<b class="fc"><i>223</i>&nbsp;            logger.info(&quot;year is &quot; + year);</b>
+<b class="fc"><i>224</i>&nbsp;            return false;</b>
+<i>225</i>&nbsp;        }
+<i>226</i>&nbsp;        //判断当前月份是否合法
+<b class="fc"><i>227</i>&nbsp;        if (month &gt; 12 || month &lt; 1) {</b>
+<b class="fc"><i>228</i>&nbsp;            logger.info(&quot;month is &quot; + month);</b>
+<b class="fc"><i>229</i>&nbsp;            return false;</b>
+<i>230</i>&nbsp;        }
+<i>231</i>&nbsp;        //得到当前月份对应的天数
+<b class="fc"><i>232</i>&nbsp;        int dayOfMonth = getDayOfMonth(year, month);</b>
+<i>233</i>&nbsp;        //判断当前日期是否合法
+<b class="fc"><i>234</i>&nbsp;        if (day &gt; dayOfMonth || day &lt; 1) {</b>
+<b class="fc"><i>235</i>&nbsp;            logger.info(&quot;dayOfMonth is &quot; + dayOfMonth);</b>
+<b class="fc"><i>236</i>&nbsp;            logger.info(&quot;day is &quot; + day);</b>
+<b class="fc"><i>237</i>&nbsp;            return false;</b>
+<i>238</i>&nbsp;        }
+<i>239</i>&nbsp;        //1582年10月05日到10月14日这十天不存在
+<b class="fc"><i>240</i>&nbsp;        if (year == 1582 &amp;&amp; month == 10) {</b>
+<b class="fc"><i>241</i>&nbsp;            if (day &gt;= 5 &amp;&amp; day &lt;= 14) {</b>
+<b class="fc"><i>242</i>&nbsp;                logger.info(&quot;the date &quot; + year + &quot;.&quot; + month + &quot;.&quot; + day + &quot;does not exist in the history&quot;);</b>
+<b class="fc"><i>243</i>&nbsp;                return false;</b>
+<i>244</i>&nbsp;            }
+<i>245</i>&nbsp;        }
+<i>246</i>&nbsp;
+<b class="fc"><i>247</i>&nbsp;        return true;</b>
+<i>248</i>&nbsp;    }
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    //判断平年和闰年,并返回相应月份的天数
+<i>251</i>&nbsp;    private int getDayOfMonth(int year, int month) {
+<b class="fc"><i>252</i>&nbsp;        int dayOfMonth = 30;</b>
+<b class="fc"><i>253</i>&nbsp;        switch (month) {</b>
+<i>254</i>&nbsp;            case 1:
+<i>255</i>&nbsp;            case 3:
+<i>256</i>&nbsp;            case 5:
+<i>257</i>&nbsp;            case 7:
+<i>258</i>&nbsp;            case 8:
+<i>259</i>&nbsp;            case 10:
+<i>260</i>&nbsp;            case 12:
+<b class="fc"><i>261</i>&nbsp;                dayOfMonth = 31;</b>
+<b class="fc"><i>262</i>&nbsp;                break;</b>
+<i>263</i>&nbsp;            case 4:
+<i>264</i>&nbsp;            case 6:
+<i>265</i>&nbsp;            case 9:
+<i>266</i>&nbsp;            case 11:
+<b class="fc"><i>267</i>&nbsp;                dayOfMonth = 30;</b>
+<b class="fc"><i>268</i>&nbsp;                break;</b>
+<i>269</i>&nbsp;            case 2:
+<b class="fc"><i>270</i>&nbsp;                if (isLeapYear(year)) {</b>
+<b class="fc"><i>271</i>&nbsp;                    dayOfMonth = 29;</b>
+<i>272</i>&nbsp;                } else {
+<b class="fc"><i>273</i>&nbsp;                    dayOfMonth = 28;</b>
+<i>274</i>&nbsp;                }
+<i>275</i>&nbsp;                break;
+<i>276</i>&nbsp;        }
+<b class="fc"><i>277</i>&nbsp;        return dayOfMonth;</b>
+<i>278</i>&nbsp;    }
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;    //判断是不是闰年
+<i>281</i>&nbsp;    private boolean isLeapYear(int year) {
+<i>282</i>&nbsp;        //规定能被400整除的是闰年
+<i>283</i>&nbsp;        //能被4整除但是不能被100整除的是闰年
+<b class="fc"><i>284</i>&nbsp;        return ((year % 100 != 0 &amp;&amp; year % 4 == 0) || year % 400 == 0) ? true : false;</b>
+<i>285</i>&nbsp;    }
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;//    public MyDate dateToMyDate(Date date) {
+<i>288</i>&nbsp;//        return new MyDate(date);
+<i>289</i>&nbsp;//    }
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    public MyDate strToMyDate(String str) {
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;
+<b class="fc"><i>294</i>&nbsp;        String pattern = &quot;.*[0-9]+(.[0-9]{1,2}){2}.*&quot;;</b>
+<b class="fc"><i>295</i>&nbsp;        if (!Pattern.matches(pattern, str)) {</b>
+<b class="fc"><i>296</i>&nbsp;            logger.info(&quot;the string not matches yyyy/mm/dd&quot;);</b>
+<b class="fc"><i>297</i>&nbsp;            return null;</b>
+<i>298</i>&nbsp;        }
+<i>299</i>&nbsp;
+<b class="fc"><i>300</i>&nbsp;        if (str.lastIndexOf(&quot; &quot;) != -1) {</b>
+<b class="fc"><i>301</i>&nbsp;            str = str.substring(0, str.lastIndexOf(&quot; &quot;));</b>
+<i>302</i>&nbsp;        }
+<i>303</i>&nbsp;        //以/ | . - _ \为分隔符
+<b class="fc"><i>304</i>&nbsp;        String[] strs = str.split(&quot;/|\\||\\.|_|\\\\&quot;);</b>
+<b class="fc"><i>305</i>&nbsp;        int year = Integer.parseInt(strs[0]);</b>
+<b class="fc"><i>306</i>&nbsp;        int month = Integer.parseInt(strs[1]);</b>
+<b class="fc"><i>307</i>&nbsp;        int day = Integer.parseInt(strs[2]);</b>
+<b class="fc"><i>308</i>&nbsp;        return new MyDate(year, month, day);</b>
+<i>309</i>&nbsp;    }
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;    /**使用系统函数验证next n day **/
+<i>312</i>&nbsp;    /*public Date nextNdaysByCalendar(MyDate date, int n) {
+<i>313</i>&nbsp;        if (!isDateLegal(date)) {
+<i>314</i>&nbsp;            logger.info(&quot;the date is not legal&quot;);
+<i>315</i>&nbsp;            return null;
+<i>316</i>&nbsp;        }
+<i>317</i>&nbsp;        int year = date.getYear();
+<i>318</i>&nbsp;        int month = date.getMonth();
+<i>319</i>&nbsp;        int day = date.getDay();
+<i>320</i>&nbsp;        SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy年MM月dd日&quot;);
+<i>321</i>&nbsp;        Calendar calendar = Calendar.getInstance();
+<i>322</i>&nbsp;        calendar.set(year, month - 1, day);
+<i>323</i>&nbsp;        Date today = calendar.getTime();
+<i>324</i>&nbsp;        //System.out.println(sdf.format(today));
+<i>325</i>&nbsp;        logger.info(&quot;today is &quot; + today);
+<i>326</i>&nbsp;
+<i>327</i>&nbsp;        calendar.setTime(today);
+<i>328</i>&nbsp;        calendar.add(Calendar.DATE, n);
+<i>329</i>&nbsp;        Date nextNdays = calendar.getTime();
+<i>330</i>&nbsp;        //System.out.println(&quot;next n day is:&quot; + sdf.format(nextDays) + &quot; by java.calendar&quot;);
+<i>331</i>&nbsp;        logger.info(&quot;next n day is: &quot; + sdf.format(nextNdays) + &quot; by java.calendar&quot;);
+<i>332</i>&nbsp;
+<i>333</i>&nbsp;        return nextNdays;
+<i>334</i>&nbsp;    }*/
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;}
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;/*SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy年MM月dd日&quot;);
+<i>339</i>&nbsp;Date date = new Date();
+<i>340</i>&nbsp;Calendar c = Calendar.getInstance();
+<i>341</i>&nbsp;c.setTime(date);
+<i>342</i>&nbsp;c.add(Calendar.DATE, 100);
+<i>343</i>&nbsp;System.out.println(sdf.format(c.getTime())); */
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-11-29 14:42</div>
+</div>
+</body>
+</html>

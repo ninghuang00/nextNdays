@@ -35,6 +35,9 @@ public class MyDate {
     }
 
     public int compareTo(MyDate anotherDate) {
+        if (anotherDate == null) {
+            return -2;
+        }
         if (year > anotherDate.getYear()) {
             return 1;
         }

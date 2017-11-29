@@ -25,7 +25,7 @@ public class DateUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        File file = new File("/Users/huangning/Desktop/temp/testCases.xlsx");
+        File file = new File("testCases.xlsx");
         ArrayList<ArrayList<Object>> result = ExcelUtil.readExcel(file);
         int height = result.size();
 
@@ -61,17 +61,37 @@ public class DateUtilTest {
 
         }
 
+        System.out.println();
+
     }
 
     @After
     public void tearDown() throws Exception {
         System.out.println(" *********** result info ****************");
+        int countOfPass = 0;
+        int countOfFailed = 0;
+        int countOfTestCase = 0;
+        List<TestResult> resultOfFailed = new ArrayList<>();
         for (TestResult result : testResults) {
-            System.out.println(result.toString());
-//            Assert.assertEquals(result.getDateExpected(),result.getDateResult());
+//            System.out.println(result.toString());
+            countOfTestCase ++;
+            if (result.dateExpected == null && result.dateResult == null) {
+                countOfPass ++;
+            }
+            else if (result.dateExpected.compareTo(result.dateResult) == 0) {
+                countOfPass++;
+            }
+            else {
+                countOfFailed ++;
+                resultOfFailed.add(result);
+            }
+
         }
-
-
+        System.out.println("测试用例通过率:" + countOfPass + "/" + countOfTestCase);
+        System.out.println("失败的用例如下所示:");
+        for (TestResult result : resultOfFailed) {
+            System.out.println(result.toString());
+        }
     }
     @Test
     public void nextNdays() throws Exception {
@@ -82,7 +102,7 @@ public class DateUtilTest {
             MyDate thatDay = row.getOutputDate();
             TestResult result = new TestResult();
             result.setDateInput(thisDay);
-            result.setDateResult(util.nextDays(thisDay, n));
+            result.setDateResult(util.nextNdays(thisDay, n));
             result.setDateExpected(thatDay);
             result.setN(n);
             testResults.add(result);

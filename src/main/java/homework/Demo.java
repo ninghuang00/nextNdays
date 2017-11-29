@@ -14,8 +14,8 @@ public class Demo {
     @Test
     public void strToDate() throws Exception {
         String in = "1/1/1";
-        String n = "-1";
-        String out = "-1/12/12";
+        String n = "-367";
+        String out = "-1/1/30";
         MyDate inner = util.strToMyDate(in);
 
         MyDate outter  = util.strToMyDate(out);
@@ -23,6 +23,21 @@ public class Demo {
         System.out.println();
 
 
+    }
+
+    @Test
+    public void nextDays() throws Exception {
+
+//        String path = Demo.class.getClassLoader().getResource("");
+        /*int year = 1582;
+        int month = 3;
+        int day = 10;
+        int n = -3650000;
+        MyDate thisDay = new MyDate(year, month, day);
+
+        MyDate thatDay = util.nextNdays(thisDay, n);
+
+        System.out.println();*/
     }
 
     @Test
