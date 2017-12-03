@@ -34,6 +34,7 @@ public class MyDate {
         this.day = day;
     }
 
+    //时间大于传入参数返回1
     public int compareTo(MyDate anotherDate) {
         if (anotherDate == null) {
             return -2;

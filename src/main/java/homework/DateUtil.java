@@ -68,7 +68,7 @@ public class DateUtil {
                 } else {
                     //n > 366
                     //这一年不是闰年但是下一年是,并且日期超过2月28日
-                    if (isLeapYear(nextYear) && myDate.compareTo(new MyDate(thisYear, 3, 1)) == 1) {
+                    if (isLeapYear(nextYear) && myDate.compareTo(new MyDate(thisYear, 3, 1)) >= 0) {
                         n -= 366;
                     } else {
                         //如果没有超过2月28日,要到明年的同一天只要365天
@@ -131,11 +131,17 @@ public class DateUtil {
     //以n为条件进行while循环,计算日期
     public MyDate nextDays(MyDate myDate, long n) {
         if (myDate != null) {
-            if (n >= 0) {
+            if (n > 0) {
                 while (n-- > 0) {
                     myDate = nextDay(myDate);
                 }
-            } else {
+            }
+            else if(n == 0){
+                if (!isDateLegal(myDate)) {
+                    myDate = null;
+                }
+            }
+            else {
                 while (n++ < 0) {
                     myDate = lastDay(myDate);
                 }
@@ -326,7 +332,7 @@ public class DateUtil {
     }
 
     /**使用系统函数验证next n day **/
-    /*public Date nextNdaysByCalendar(MyDate date, int n) {
+    public Date nextNdaysByCalendar(MyDate date, int n) {
         if (!isDateLegal(date)) {
             logger.info("the date is not legal");
             return null;
@@ -348,7 +354,7 @@ public class DateUtil {
         logger.info("next n day is: " + sdf.format(nextNdays) + " by java.calendar");
 
         return nextNdays;
-    }*/
+    }
 
 }
 

@@ -3,6 +3,8 @@ package homework;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -10,6 +12,7 @@ import java.util.regex.Pattern;
  */
 public class Demo {
 
+    Logger logger = Logger.getLogger("hn");
     DateUtil util = new DateUtil();
 
     @Test
@@ -19,7 +22,7 @@ public class Demo {
         String out = "-1/1/30";
         MyDate inner = util.strToMyDate(in);
 
-        MyDate outter  = util.strToMyDate(out);
+        MyDate outter = util.strToMyDate(out);
 
         System.out.println();
 
@@ -50,25 +53,60 @@ public class Demo {
     @Test
     public void dateTest() throws Exception {
 
+        logger.setLevel(Level.OFF);
+        //year=118是2018年,year=0是1900年
         //int year = 118;
-        int year = -316;
-        int month = 3;
-        int day = 10;
+        int year = 100;
+//        int year = -148;
+        int month = 1;
+        int day = 1;
         Date date = new Date(year, month - 1, day);
 //        date = new Date();
 //        int n = -734;
 //        int n = -158925*2;
-        long n = -3650000;
+        long n = 365;
         // long n = (2 << 30) - 1;
 //        int n = 181502;
 //        int n = 365 * 1000;
 //        int n = 365*3 +366;
-        System.out.println("result of system api ==========>");
-        //System.out.println(util.nextNdaysByCalendar(new MyDate(date), (int) n));
-        System.out.println("result of my program =========>");
-        System.out.println(util.nextNdays(new MyDate(date), n));
-        System.out.println();
+        int base = 365;
+
+
+        for (int i = 1; i < 10; i++) {
+            n = i * base;
+            System.out.println("/********************** start ***********************/");
+            System.out.println("result of system api ==========>");
+            System.out.println(util.nextNdaysByCalendar(new MyDate(date), (int) n));
+            System.out.println("result of my program =========>");
+            System.out.println(util.nextNdays(new MyDate(date), n));
+            System.out.println("/********************** end ***********************/");
+            System.out.println();
+        }
     }
 
+    @Test
+    public void testOne() throws Exception {
+//        logger.setLevel(Level.OFF);
+        //year=118是2018年,year=0是1900年,1548
+        //int year = 118;
+        int year = -354;
+//        int year = -148;
+        int month = 1;
+        int day = 1;
+        Date date = new Date(year, month - 1, day);
+//        date = new Date();
+//        int n = -734;
+//        int n = -158925*2;
+        long n = 100000;
 
+
+        System.out.println("/********************** start ***********************/");
+        System.out.println("result of system api ==========>");
+        System.out.println(util.nextNdaysByCalendar(new MyDate(date), (int) n));
+        System.out.println("result of my program =========>");
+        System.out.println(util.nextNdays(new MyDate(date), n));
+        System.out.println("/********************** end ***********************/");
+        System.out.println();
+
+    }
 }

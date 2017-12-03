@@ -26,7 +26,8 @@ public class DateUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        File file = new File("testcase/test严晓波.xlsx");
+        //测试用例的路径,在根目录下的testCase文件夹内
+        File file = new File("testcase/test陈慧宇.xlsx");
         ArrayList<ArrayList<Object>> result = ExcelUtil.readExcel(file);
         int height = result.size();
 
